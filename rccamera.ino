@@ -20,9 +20,14 @@ static uint32_t currentTime;
   #define LEDPIN_OFF                 PORTB &= ~(1<<5);
   #define LEDPIN_ON                  PORTB |= (1<<5);
 
-  #define SHUTTER_PINMODE            pinMode (3, OUTPUT);
-  #define SHUTTER_OFF                PORTD &= ~(1<<3);
-  #define SHUTTER_ON                 PORTD |= (1<<3);
+
+  #define FOCUS_PINMODE            pinMode (3, OUTPUT);
+  #define FOCUS_OFF                digitalWrite(3, LOW);//PORTD &= ~(1<<3);
+  #define FOCUS_ON                 digitalWrite(3, HIGH); //PORTD |= (1<<3);
+
+  #define SHUTTER_PINMODE            pinMode (4, OUTPUT);
+  #define SHUTTER_OFF                digitalWrite(4, LOW);//PORTD &= ~(1<<4);
+  #define SHUTTER_ON                 digitalWrite(4, HIGH);//PORTD |= (1<<4);
 
 
 byte newbit,oldbit,changed;
@@ -47,6 +52,8 @@ ISR(PCINT2_vect)
 void setup() {
   //Serial.begin(SERIAL_COM_SPEED);
   LEDPIN_PINMODE
+  FOCUS_PINMODE
+  SHUTTER_PINMODE
   pinMode(2, INPUT);
   PCICR |= (1 << PCIE2);
   PCMSK2 = (1 << PCINT18);
@@ -59,9 +66,11 @@ void loop () {
     //Serial.println(rawIn);
     if (rawIn>1500) {
       LEDPIN_ON
+      FOCUS_ON
       SHUTTER_ON
     } else {
       LEDPIN_OFF
+      FOCUS_OFF
       SHUTTER_OFF
     }
     rcTime = currentTime; 
